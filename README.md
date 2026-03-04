@@ -1,26 +1,47 @@
-# NewKnowledgeBase — Skills‑Driven Knowledge Base (Execution‑First)
+<img src="assets/banner.png" alt="banner" width="100%" />
+
+# EvolveKB — Skills‑Driven Knowledge Base (Execution‑First)
 
 [![Status](https://img.shields.io/badge/status-WIP-yellow)](./README.md)
 [![License](https://img.shields.io/badge/license-MIT-blue)](./LICENSE)
 
-> 一个把“知识”组织成 **可执行技能（skills）** 的知识库框架。  
-> 不止做 recall/rerank，而是把知识沉淀为 **可复用的流程（playbook）与过程（procedure）**，并用门控机制推动知识持续演进。
+> 把“知识”变成 **可执行的技能**。  
+> 不止做 recall/rerank，而是沉淀为 **可复用的流程（playbook）与过程（procedure）**，在门控下持续演进。
 
 ---
 
-## Vision
+## TL;DR
 
-**Execution‑first**：把知识升级为“可执行技能”，让 agent 在系统内完成理解、梳理、更新、演进，最终从根源产出可用信息，而不是依赖候选池参考。
-
----
-
-## Star history
-
-![Star History](https://api.star-history.com/svg?repos=2sao7sao/NewKnowledgeBase&type=Date)
+- 传统 RAG 更擅长“找资料”，但不擅长“把资料变成可复用流程”。
+- **EvolveKB** 选择 execution‑first：先让知识可执行，再谈召回增强。
+- 你可以选择 **引用 / 消化 / 转化 / 演进** 四种用法，让知识按你的方式参与推理。
 
 ---
 
-## Architecture (high‑level)
+## Why (问题是什么)
+
+传统 RAG 的主路径是：query → recall → rerank → LLM 参考候选内容生成。工程成熟，但常见问题：
+
+- **理解浅**：更像“片段附近拼接”，而非结构化理解与沉淀。
+- **multi‑hop 易断链**：chunk 切分导致跨段逻辑断裂。
+- **可用性不足**：GraphRAG / RAPTER 等提升联结，但核心仍是“更好的召回”。
+
+如果你想要的是“可复用的流程、可执行的步骤”，传统 RAG 还不够。
+
+---
+
+## What (我们提供什么)
+
+**EvolveKB = 把知识升级为技能**：
+
+- **Playbook**：面向一个 intent 的完整流程
+- **Procedure**：可复用的原子能力
+- **Gate**：质量控制与演进门控
+- **Settings**：让同一套知识在不同策略下表现不同
+
+---
+
+## How (系统怎么跑)
 
 1. 用户提问 / 上传资料
 2. 读取 settings：选择知识使用模式（reference / digest / transform / evolve）
@@ -31,25 +52,7 @@
 
 ---
 
-## What problem this solves
-
-传统 RAG 的主路径是：query → recall → rerank → LLM 参考候选内容生成。它工程成熟，但常见问题：
-
-- **知识未被真正理解**：更多是“片段附近拼接”，而非结构化理解与沉淀。
-- **multi‑hop 易断链**：chunk 切分导致跨段逻辑断裂。
-- **可用性不足**：GraphRAG / RAPTER 等提升联结，但核心仍是“更好的召回”。
-
-本项目选择另一条路线：**先让知识可执行，再谈召回增强**。
-
----
-
-## Core concepts (4 件事就够用)
-
-### 1) Skill = Playbook / Procedure
-- **Playbook**：面向一个 intent 的完整工作流（多步骤）
-- **Procedure**：可复用的原子能力（被多个 playbook 调用）
-
-### 2) Knowledge usage modes（用户可选）
+## Knowledge usage modes（四种用法）
 
 | Mode | 作用 | 典型场景 |
 | --- | --- | --- |
@@ -57,13 +60,6 @@
 | Digest | 结构化摘要后再回答 | 需要吸收与总结 |
 | Transform | 转为 procedures/playbooks | 构建可复用技能 |
 | Evolve | 允许提出变更并门控合并 | 持续演进知识库 |
-
-### 3) Settings Layer（配置层）
-把“知识用法 / 门控强度 / 演进策略”从代码和 prompt 中抽离出来，让同一套知识在不同 settings 下呈现不同策略。
-
-### 4) Gates（演进质量控制）
-- 结构正确、引用完整、内容瘦身、可回滚、可验证
-- Gate 本身也可演进（见 Roadmap）
 
 ---
 
