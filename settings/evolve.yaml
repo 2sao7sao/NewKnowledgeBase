@@ -1,0 +1,5 @@
+knowledge_mode: evolve
+# gate_level: 0..3 (strictness)
+gate_level: 3
+auto_evolve: false
+max_skill_md_bytes: 50000

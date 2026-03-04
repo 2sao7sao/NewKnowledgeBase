@@ -16,6 +16,8 @@
 - [Vision](#vision)
 - [Use cases](#use-cases)
 - [How it works](#how-it-works)
+- [Minimal runnable demo](#minimal-runnable-demo)
+- [Mode presets](#mode-presets)
 - [Roadmap](#roadmap)
 
 ---
@@ -83,10 +85,23 @@ This repo already includes a minimal end‑to‑end path (no external tools):
 
 ```bash
 python -m pip install -r requirements.txt
-python scripts/run.py --intent compare_frameworks --question "对比 GraphRAG 和 Execution-first 的差异" --settings settings/default.yaml
+python scripts/run.py --intent compare_frameworks --question "对比 GraphRAG 和 Execution-first 的差异" --settings settings/reference.yaml
 ```
 
 Expected output example: [examples/demo.md](examples/demo.md)
+
+---
+
+## Mode presets
+
+You can switch knowledge behavior via presets:
+
+```bash
+python scripts/run.py --intent compare_frameworks --question "..." --settings settings/reference.yaml
+python scripts/run.py --intent compare_frameworks --question "..." --settings settings/digest.yaml
+python scripts/run.py --intent compare_frameworks --question "..." --settings settings/transform.yaml
+python scripts/run.py --intent compare_frameworks --question "..." --settings settings/evolve.yaml
+```
 
 ---
 
@@ -104,10 +119,11 @@ Expected output example: [examples/demo.md](examples/demo.md)
 ## Roadmap
 
 1. ✅ README / 产品叙事定稿
-2. ⏭️ 引入 settings 文件，用户可选知识使用模式
-3. ⏭️ 定义核心 skill schema 与 gate 规则
-4. ⏭️ 实现最小可运行 demo（一条 end‑to‑end 路径）
+2. ✅ 引入 settings 文件，用户可选知识使用模式
+3. ✅ 最小可运行 demo（一条 end‑to‑end 路径）
+4. ⏭️ 定义核心 skill schema 与 gate 规则
 5. ⏭️ 引入“gate evolution loop”
+6. ⏭️ 增加更多 playbook 与示例
 
 ---
 

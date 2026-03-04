@@ -1,4 +1,3 @@
-cat > settings/SCHEMA.md << 'MD'
 # Settings Schema
 
 This document defines the supported keys in a settings YAML file (e.g. `settings/default.yaml`).
@@ -49,3 +48,4 @@ knowledge_mode: reference
 gate_level: 1
 auto_evolve: false
 max_skill_md_bytes: 50000
+```
