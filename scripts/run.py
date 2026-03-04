@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 import yaml
@@ -304,7 +305,18 @@ def main():
     mode = settings.get("knowledge_mode", "reference")
     gate = int(settings.get("gate_level", 1))
     template = settings.get("output_template", "expanded")
-    print(render_by_mode(mode, gate, base_md, norm, matrix, template))
+    rendered = render_by_mode(mode, gate, base_md, norm, matrix, template)
+
+    if mode == "evolve":
+        proposals_dir = repo / "outputs" / "proposals"
+        proposals_dir.mkdir(parents=True, exist_ok=True)
+        ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+        intent = args.intent.replace("/", "_")
+        proposal_path = proposals_dir / f"{ts}_{intent}.md"
+        proposal_path.write_text(rendered, encoding="utf-8")
+        print(f"[proposal] {proposal_path}")
+
+    print(rendered)
 
 
 if __name__ == "__main__":

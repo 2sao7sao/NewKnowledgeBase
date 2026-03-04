@@ -120,6 +120,15 @@ python scripts/run.py --intent compare_frameworks --question "..." --settings se
 
 ---
 
+## Versioned proposals
+
+When running in `evolve` mode, EvolveKB writes a proposal snapshot for review:
+
+```bash
+python scripts/run.py --intent compare_frameworks --question "..." --settings settings/evolve.yaml
+# -> outputs/proposals/<timestamp>_compare_frameworks.md
+```
+
 ## Roadmap
 
 1. ✅ README / 产品叙事定稿
