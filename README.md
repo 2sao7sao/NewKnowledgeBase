@@ -77,6 +77,19 @@
 
 ---
 
+## Minimal runnable demo
+
+This repo already includes a minimal end‑to‑end path (no external tools):
+
+```bash
+python -m pip install -r requirements.txt
+python scripts/run.py --intent compare_frameworks --question "对比 GraphRAG 和 Execution-first 的差异" --settings settings/default.yaml
+```
+
+Expected output example: [examples/demo.md](examples/demo.md)
+
+---
+
 ## Knowledge usage modes
 
 | Mode | 作用 | 典型场景 |
