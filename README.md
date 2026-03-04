@@ -4,6 +4,7 @@
 
 [![Status](https://img.shields.io/badge/status-Concept%20%2F%20WIP-yellow)](./README.md)
 [![Stars](https://img.shields.io/github/stars/2sao7sao/EvolveKB?style=flat)](https://github.com/2sao7sao/EvolveKB)
+[![Commit Activity](https://img.shields.io/github/commit-activity/m/2sao7sao/EvolveKB)](https://github.com/2sao7sao/EvolveKB/commits/main)
 [![License](https://img.shields.io/badge/license-MIT-blue)](./LICENSE)
 
 > 把“知识”变成 **可执行的技能**。  
@@ -143,6 +144,12 @@ python scripts/run.py --intent compare_frameworks --question "..." --settings se
 ## Star history
 
 ![Star History](https://api.star-history.com/svg?repos=2sao7sao/EvolveKB&type=Date)
+
+---
+
+## Commit activity
+
+![Commit Activity Graph](https://github-readme-activity-graph.vercel.app/graph?username=2sao7sao&repo=EvolveKB&theme=github-compact)
 
 ---
 
