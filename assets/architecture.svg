@@ -1,0 +1,44 @@
+<svg width="1200" height="520" viewBox="0 0 1200 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="520" fill="#0B0F1A"/>
+  <rect x="40" y="40" width="1120" height="440" rx="16" fill="#111827"/>
+  <text x="80" y="100" fill="#F9FAFB" font-family="Arial, sans-serif" font-size="28" font-weight="700">EvolveKB Architecture</text>
+  <text x="80" y="135" fill="#9CA3AF" font-family="Arial, sans-serif" font-size="16">Execution-first knowledge flow with gates and settings</text>
+
+  <rect x="80" y="180" width="220" height="80" rx="12" fill="#1F2937"/>
+  <text x="100" y="215" fill="#E5E7EB" font-family="Arial, sans-serif" font-size="14">User Input</text>
+  <text x="100" y="240" fill="#9CA3AF" font-family="Arial, sans-serif" font-size="12">question / docs</text>
+
+  <rect x="340" y="180" width="220" height="80" rx="12" fill="#1F2937"/>
+  <text x="360" y="215" fill="#E5E7EB" font-family="Arial, sans-serif" font-size="14">Settings Layer</text>
+  <text x="360" y="240" fill="#9CA3AF" font-family="Arial, sans-serif" font-size="12">mode + gate level</text>
+
+  <rect x="600" y="180" width="220" height="80" rx="12" fill="#1F2937"/>
+  <text x="620" y="215" fill="#E5E7EB" font-family="Arial, sans-serif" font-size="14">Playbook Router</text>
+  <text x="620" y="240" fill="#9CA3AF" font-family="Arial, sans-serif" font-size="12">intent → playbook</text>
+
+  <rect x="860" y="180" width="220" height="80" rx="12" fill="#1F2937"/>
+  <text x="880" y="215" fill="#E5E7EB" font-family="Arial, sans-serif" font-size="14">Procedures</text>
+  <text x="880" y="240" fill="#9CA3AF" font-family="Arial, sans-serif" font-size="12">step-by-step</text>
+
+  <rect x="340" y="300" width="220" height="80" rx="12" fill="#1F2937"/>
+  <text x="360" y="335" fill="#E5E7EB" font-family="Arial, sans-serif" font-size="14">Gates</text>
+  <text x="360" y="360" fill="#9CA3AF" font-family="Arial, sans-serif" font-size="12">quality control</text>
+
+  <rect x="600" y="300" width="220" height="80" rx="12" fill="#1F2937"/>
+  <text x="620" y="335" fill="#E5E7EB" font-family="Arial, sans-serif" font-size="14">Outputs</text>
+  <text x="620" y="360" fill="#9CA3AF" font-family="Arial, sans-serif" font-size="12">answers / drafts</text>
+
+  <rect x="860" y="300" width="220" height="80" rx="12" fill="#1F2937"/>
+  <text x="880" y="335" fill="#E5E7EB" font-family="Arial, sans-serif" font-size="14">Proposals</text>
+  <text x="880" y="360" fill="#9CA3AF" font-family="Arial, sans-serif" font-size="12">versioned changes</text>
+
+  <line x1="300" y1="220" x2="340" y2="220" stroke="#374151" stroke-width="2"/>
+  <line x1="560" y1="220" x2="600" y2="220" stroke="#374151" stroke-width="2"/>
+  <line x1="820" y1="220" x2="860" y2="220" stroke="#374151" stroke-width="2"/>
+
+  <line x1="450" y1="260" x2="450" y2="300" stroke="#374151" stroke-width="2"/>
+  <line x1="710" y1="260" x2="710" y2="300" stroke="#374151" stroke-width="2"/>
+  <line x1="970" y1="260" x2="970" y2="300" stroke="#374151" stroke-width="2"/>
+
+  <text x="80" y="440" fill="#9CA3AF" font-family="Arial, sans-serif" font-size="12">Flow: Input → Settings → Playbook → Procedures → Gates → Outputs / Proposals</text>
+</svg>
