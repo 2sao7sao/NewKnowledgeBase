@@ -161,12 +161,73 @@ def compose_answer_md(norm: Dict[str, Any], matrix: List[Dict[str, str]]) -> str
     lines.append("\n## 建议\n- 闭域可枚举入口：execution-first 更稳。\n- 开放域入口不可枚举：GraphRAG 弹性更强。")
     return "\n".join(lines)
 
+def extract_outline(doc_path: str) -> Dict[str, Any]:
+    p = Path(doc_path)
+    if not p.exists():
+        raise SystemExit(f"Document not found: {doc_path}")
+    text = p.read_text(encoding="utf-8", errors="ignore")
+    lines = [ln.rstrip() for ln in text.splitlines()]
+    headings: List[Dict[str, Any]] = []
+    for ln in lines:
+        if ln.startswith("#"):
+            level = len(ln) - len(ln.lstrip("#"))
+            title = ln.lstrip("#").strip()
+            if title:
+                headings.append({"level": level, "title": title})
+
+    summary = ""
+    buf: List[str] = []
+    for ln in lines:
+        if ln.strip() == "":
+            if buf:
+                summary = " ".join(buf).strip()
+                break
+            continue
+        if not ln.startswith("#"):
+            buf.append(ln.strip())
+    if not summary and buf:
+        summary = " ".join(buf).strip()
+
+    return {"headings": headings, "summary": summary, "doc_name": p.stem}
+
+def compose_skill_draft(outline: Dict[str, Any]) -> str:
+    doc_name = outline.get("doc_name") or "doc"
+    name = f"ingest-{doc_name}".lower().replace("_", "-").replace(" ", "-")
+    headings = outline.get("headings") or []
+    summary = outline.get("summary") or ""
+
+    body_lines = [f"# {name} (procedure)", "", "## Summary", summary or "N/A", "", "## Outline"]
+    if headings:
+        for h in headings:
+            indent = "  " * max(0, int(h.get("level", 1)) - 1)
+            body_lines.append(f"{indent}- {h.get('title')}")
+    else:
+        body_lines.append("- (no headings found)")
+
+    fm = [
+        "---",
+        f"name: {name}",
+        f"description: Ingest and structure knowledge from {doc_name}.",
+        "metadata:",
+        "  kind: procedure",
+        "  inputs:",
+        "    doc_path: str",
+        "  outputs:",
+        "    outline: list",
+        "    summary: str",
+        "---",
+        "",
+    ]
+    return "\n".join(fm + body_lines) + "\n"
+
 
 PROC_IMPL = {
     "normalize-question": lambda env, args: normalize_question(args["question"]),
     "build-comparison-axes": lambda env, args: build_comparison_axes(args["norm"]),
     "contrast-matrix": lambda env, args: contrast_matrix(args["norm"], args["axes"]),
     "compose-answer-md": lambda env, args: compose_answer_md(args["norm"], args["matrix"]),
+    "extract-outline": lambda env, args: extract_outline(args["doc_path"]),
+    "compose-skill-draft": lambda env, args: compose_skill_draft(args["outline"]),
 }
 
 
@@ -217,10 +278,10 @@ def render_by_mode(mode: str, gate_level: int, base_md: str, norm: Dict[str, Any
 
     if mode == "transform":
         steps = [
-            "- normalize-question",
-            "- build-comparison-axes",
-            "- contrast-matrix",
-            "- compose-answer-md",
+            "normalize-question",
+            "build-comparison-axes",
+            "contrast-matrix",
+            "compose-answer-md",
         ]
         return "\n".join(
             [
@@ -261,9 +322,12 @@ def render_by_mode(mode: str, gate_level: int, base_md: str, norm: Dict[str, Any
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--intent", required=True)
-    ap.add_argument("--question", required=True)
+    ap.add_argument("--question", default="")
+    ap.add_argument("--doc", default=None, help="Path to a document for ingestion workflows")
     ap.add_argument("--settings", default=None, help="Path to settings YAML (e.g. settings/default.yaml)")
     args = ap.parse_args()
+    if not args.question and not args.doc:
+        raise SystemExit("Either --question or --doc must be provided.")
 
     repo = Path(__file__).resolve().parents[1]
     settings = load_settings(repo, args.settings)
@@ -276,7 +340,7 @@ def main():
 
     env: Dict[str, Any] = {
         "settings": settings,
-        "inputs": {"question": args.question},
+        "inputs": {"question": args.question, "doc_path": args.doc},
         "ctx": {},
         "outputs": {},
     }
@@ -300,6 +364,9 @@ def main():
             assign_path(out_path, env, result)
 
     base_md = env["outputs"].get("answer_md", "")
+    if not base_md and env["outputs"].get("skill_md"):
+        print(env["outputs"]["skill_md"])
+        return
     norm = env.get("ctx", {}).get("norm", {})
     matrix = env.get("ctx", {}).get("matrix", [])
     mode = settings.get("knowledge_mode", "reference")
@@ -316,6 +383,8 @@ def main():
         proposal_path.write_text(rendered, encoding="utf-8")
         print(f"[proposal] {proposal_path}")
 
+    if not rendered:
+        rendered = env["outputs"].get("skill_md", "")
     print(rendered)
 
 

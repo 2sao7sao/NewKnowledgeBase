@@ -6,12 +6,33 @@ import os
 import sys
 from pathlib import Path
 import subprocess
+import argparse
+import yaml
 
 def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--settings", default=None, help="Path to settings YAML (e.g. settings/default.yaml)")
+    args = ap.parse_args()
+
     repo = Path(__file__).resolve().parents[1]
+    gate_level = 1
+    max_skill_md_bytes = None
+    if args.settings:
+        p = Path(args.settings)
+        if not p.is_absolute():
+            p = repo / p
+        if not p.exists():
+            print(f"Settings file not found: {p}", file=sys.stderr)
+            return 2
+        data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+        if isinstance(data, dict):
+            gate_level = int(data.get("gate_level", gate_level))
+            max_skill_md_bytes = data.get("max_skill_md_bytes")
+        if max_skill_md_bytes is not None:
+            os.environ["MAX_SKILL_MD_BYTES"] = str(max_skill_md_bytes)
 
     # Gate: skills
-    r = subprocess.run([sys.executable, str(repo / "scripts" / "skill_validate.py")])
+    r = subprocess.run([sys.executable, str(repo / "scripts" / "skill_validate.py"), "--gate-level", str(gate_level)])
     if r.returncode != 0:
         return r.returncode
 

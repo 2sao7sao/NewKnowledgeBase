@@ -20,6 +20,7 @@
 - [Use cases](#use-cases)
 - [How it works](#how-it-works)
 - [Minimal runnable demo](#minimal-runnable-demo)
+- [Ingest a document](#ingest-a-document)
 - [Mode presets](#mode-presets)
 - [Roadmap](#roadmap)
 
@@ -101,6 +102,21 @@ Expected outputs: [examples/demo.md](examples/demo.md) (reference / digest / tra
 
 ---
 
+## Ingest a document
+
+Generate a procedure skill draft directly from a markdown file:
+
+```bash
+python scripts/ingest.py --doc path/to/your.md
+# -> skills/ingest-<doc_name>/SKILL.md
+```
+
+You can also run the playbook directly:
+
+```bash
+python scripts/run.py --intent ingest_doc --doc path/to/your.md --settings settings/transform.yaml
+```
+
 ## Mode presets
 
 Switch behavior via presets. Output verbosity is controlled by `output_template` in each preset:
@@ -139,6 +155,14 @@ python scripts/run.py --intent compare_frameworks --question "..." --settings se
 ```
 
 ---
+
+## Gate validation
+
+Run repo validation with a settings file to apply gate rules:
+
+```bash
+python scripts/validate.py --settings settings/evolve.yaml
+```
 
 ## Roadmap
 

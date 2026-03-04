@@ -9,6 +9,7 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Set, Tuple
+import argparse
 
 from frontmatter import read_skill_md
 
@@ -23,6 +24,7 @@ class Skill:
     kind: str
     metadata: Dict[str, Any]
     dir: Path
+    body: str
 
 def validate_skill_dir(skill_dir: Path, max_skill_md_bytes: int | None = None) -> Tuple[bool, str, Skill | None]:
     skill_md = skill_dir / "SKILL.md"
@@ -40,6 +42,7 @@ def validate_skill_dir(skill_dir: Path, max_skill_md_bytes: int | None = None) -
         return False, f"{skill_dir}: {e}", None
 
     fm = doc.frontmatter
+    body = doc.body or ""
     unexpected = set(fm.keys()) - ALLOWED_FRONTMATTER_KEYS
     if unexpected:
         return False, f"{skill_dir}: Unexpected frontmatter keys: {sorted(unexpected)}", None
@@ -69,7 +72,7 @@ def validate_skill_dir(skill_dir: Path, max_skill_md_bytes: int | None = None) -
         return False, f"{skill_dir}: metadata must be a mapping", None
 
     kind = str(md.get("kind") or "other")
-    return True, "OK", Skill(name=name, description=desc, kind=kind, metadata=md, dir=skill_dir)
+    return True, "OK", Skill(name=name, description=desc, kind=kind, metadata=md, dir=skill_dir, body=body)
 
 def scan_skills(skills_root: Path) -> List[Path]:
     if not skills_root.exists():
@@ -106,7 +109,46 @@ def validate_orchestration(skills: Dict[str, Skill]) -> List[str]:
             seen_calls.add(call)
     return errors
 
+def apply_gate_rules(skills: Dict[str, Skill], gate_level: int) -> List[str]:
+    errors: List[str] = []
+    if gate_level < 2:
+        return errors
+
+    for s in skills.values():
+        if s.kind not in {"playbook", "procedure"}:
+            errors.append(f"{s.name}: metadata.kind must be playbook or procedure at gate>=2")
+
+        if s.kind == "procedure":
+            inputs = s.metadata.get("inputs")
+            outputs = s.metadata.get("outputs")
+            if not isinstance(inputs, dict) or not inputs:
+                errors.append(f"{s.name}: procedure must define metadata.inputs at gate>=2")
+            if not isinstance(outputs, dict) or not outputs:
+                errors.append(f"{s.name}: procedure must define metadata.outputs at gate>=2")
+
+        if s.kind == "playbook":
+            intent = s.metadata.get("intent")
+            if not isinstance(intent, str) or not intent.strip():
+                errors.append(f"{s.name}: playbook must define metadata.intent at gate>=2")
+
+    if gate_level < 3:
+        return errors
+
+    for s in skills.values():
+        body = (s.body or "").strip()
+        if len(body) < 30:
+            errors.append(f"{s.name}: body too short at gate>=3 (>=30 chars required)")
+        if "#" not in body:
+            errors.append(f"{s.name}: body must include a markdown heading at gate>=3")
+        if len(s.description) < 20:
+            errors.append(f"{s.name}: description too short at gate>=3 (>=20 chars required)")
+
+    return errors
+
 def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--gate-level", type=int, default=1)
+    args = ap.parse_args()
     repo = Path(__file__).resolve().parents[1]
     skills_root = repo / "skills"
 
@@ -140,6 +182,13 @@ def main() -> int:
     if errors:
         print("VALIDATION FAILED:")
         for e in errors:
+            print(f"- {e}")
+        return 1
+
+    gate_errors = apply_gate_rules(skills, args.gate_level)
+    if gate_errors:
+        print("GATE VALIDATION FAILED:")
+        for e in gate_errors:
             print(f"- {e}")
         return 1
 
