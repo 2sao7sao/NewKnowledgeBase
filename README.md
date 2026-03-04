@@ -127,6 +127,8 @@ Generate a knowledge asset directly from a markdown file:
 
 Usage evolves separately based on verification and user behavior, and is stored under `kb/usage`.
 
+Auto-usage is generated after playbook runs and reviewed weekly.
+
 ```bash
 python scripts/ingest.py --doc path/to/your.md
 # -> kb/knowledge/<doc_name>.md
@@ -194,7 +196,7 @@ python scripts/review_usage.py
 # -> outputs/reviews/usage_review_<timestamp>.md
 ```
 
-The usage index is auto‑maintained at `kb/usage/index.md`.
+The usage index is auto‑maintained at `kb/usage/index.md`. Usage events are stored in `outputs/usage/events.log`.
 
 ## Roadmap
 

@@ -440,6 +440,9 @@ def main():
                     text = re.sub(r"updated_at: .*", f"updated_at: {today}", text)
                 else:
                     text = text.replace("---\n", f"---\nupdated_at: {today}\n", 1)
+                # If existing usage still has TBD uses and we found matches, update it
+                if uses != ["TBD"] and "uses:\n- TBD" in text:
+                    text = text.replace("uses:\n- TBD", "uses:\n" + "\n".join([f"- {u}" for u in uses]))
                 usage_path.write_text(text, encoding="utf-8")
             else:
                 fm = {
@@ -451,6 +454,7 @@ def main():
                     "pattern": "TBD",
                     "steps": steps,
                     "updated_at": today,
+                    "needs_review": False,
                 }
                 fm_yaml = yaml.safe_dump(fm, sort_keys=False, allow_unicode=True).strip()
                 body = f"# {usage_name}\n\nAuto-generated usage plan.\n"
@@ -464,6 +468,14 @@ def main():
                 if entry not in index:
                     index += f"\n{entry}\n"
                     index_path.write_text(index, encoding="utf-8")
+
+            # Append usage event (for weekly review)
+            events_dir = repo / "outputs" / "usage"
+            events_dir.mkdir(parents=True, exist_ok=True)
+            ev_path = events_dir / "events.log"
+            ts = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+            with ev_path.open("a", encoding="utf-8") as f:
+                f.write(f"{ts}\t{args.intent}\t{mode}\n")
     except Exception:
         # best-effort only
         pass

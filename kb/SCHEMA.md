@@ -35,6 +35,7 @@ strategy: playbook | procedure | checklist
 pattern: required | not_needed | TBD
 steps: []
 updated_at: YYYY-MM-DD
+needs_review: true | false   # optional
 ---
 ```
 

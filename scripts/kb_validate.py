@@ -69,6 +69,9 @@ def validate_usage(path: Path, fm: Dict[str, Any], knowledge_names: set[str]) ->
             errors.append(f"{path}: updated_at must be a YYYY-MM-DD string")
     elif updated_at is None:
         errors.append(f"{path}: updated_at must be a YYYY-MM-DD string")
+    needs_review = fm.get("needs_review")
+    if needs_review is not None and not isinstance(needs_review, bool):
+        errors.append(f"{path}: needs_review must be boolean when provided")
     return errors
 
 

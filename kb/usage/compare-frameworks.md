@@ -11,7 +11,7 @@ steps:
 - build-comparison-axes
 - contrast-matrix
 - compose-answer-md
-updated_at: '2026-03-04'
+updated_at: 2026-03-04
 ---
 
 # compare-frameworks

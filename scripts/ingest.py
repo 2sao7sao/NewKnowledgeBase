@@ -43,9 +43,26 @@ def main() -> int:
         print(f"Knowledge already exists: {out_path}. Use --force to overwrite.", file=sys.stderr)
         return 1
 
+    existed = out_path.exists()
     out_path.write_text(knowledge_md, encoding="utf-8")
 
     print(f"[ingest] wrote {out_path}")
+
+    # If overwriting existing knowledge, mark related usage for review
+    if existed:
+        usage_dir = repo / "kb" / "usage"
+        if usage_dir.exists():
+            for p in usage_dir.glob("*.md"):
+                try:
+                    text = p.read_text(encoding="utf-8")
+                    if f"- {name}" in text or f"uses: [{name}]" in text:
+                        if "needs_review:" in text:
+                            text = text.replace("needs_review: false", "needs_review: true")
+                        else:
+                            text = text.replace("---\n", "---\nneeds_review: true\n", 1)
+                        p.write_text(text, encoding="utf-8")
+                except Exception:
+                    continue
     return 0
 
 

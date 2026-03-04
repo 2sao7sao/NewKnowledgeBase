@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Weekly usage review: summarize TBD patterns and last updates."""
+"""Weekly usage review: summarize TBD patterns and promote patterns based on usage events."""
 
 from __future__ import annotations
 
@@ -27,9 +27,24 @@ def main() -> int:
 
     tbd = []
     recent = []
+    counts: Dict[str, int] = {}
+
+    # Read usage events
+    events = repo / "outputs" / "usage" / "events.log"
+    if events.exists():
+        for line in events.read_text(encoding="utf-8").splitlines():
+            try:
+                date_s, intent, _mode = line.split("\t")
+                dt = datetime.strptime(date_s, "%Y-%m-%d").replace(tzinfo=timezone.utc)
+                if dt >= since:
+                    counts[intent] = counts.get(intent, 0) + 1
+            except Exception:
+                continue
 
     if usage_dir.exists():
         for p in sorted(usage_dir.glob("*.md")):
+            if p.name == "index.md":
+                continue
             fm = load_usage(p)
             if fm.get("pattern") == "TBD":
                 tbd.append(p.stem)
@@ -42,6 +57,13 @@ def main() -> int:
                 except Exception:
                     pass
 
+            # Promote pattern if frequently used
+            intent = fm.get("intent")
+            if fm.get("pattern") == "TBD" and intent in counts and counts[intent] >= 3:
+                text = p.read_text(encoding="utf-8")
+                text = text.replace("pattern: TBD", "pattern: required")
+                p.write_text(text, encoding="utf-8")
+
     ts = now.strftime("%Y%m%dT%H%M%SZ")
     out = report_dir / f"usage_review_{ts}.md"
     lines = ["# Weekly Usage Review", "", f"Generated: {now.date()} UTC", ""]
@@ -53,6 +75,13 @@ def main() -> int:
     lines.append("\n## Updated this week")
     if recent:
         lines += [f"- {x}" for x in recent]
+    else:
+        lines.append("- none")
+
+    lines.append("\n## Usage frequency (7d)")
+    if counts:
+        for k, v in sorted(counts.items(), key=lambda x: -x[1]):
+            lines.append(f"- {k}: {v}")
     else:
         lines.append("- none")
 
